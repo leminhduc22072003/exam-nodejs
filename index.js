@@ -7,7 +7,7 @@ const {Model} = require("mongoose");
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 app.listen(PORT,()=>{
     console.log("Sever is running...");
@@ -29,9 +29,19 @@ app.use(session({
     }
 }))
 
-const userRoute = require("../node-js/src/routes/user.routes");
-app.use("/creat-user",userRoute);
-app.get("/creat-user",(req,res)=>{
-    res.render("home",{
-    })
+app.get("/",function(req,res){
+    const User = require("./src/models/user");
+    User.find({})
+        .then(rs=>{
+            res.render("home",{
+                users: rs
+            })
+        })
+        .catch(err=>{
+            res.send(err);
+        })
+
 })
+
+const userRoute = require("../node-js/src/routes/user.routes");
+app.use("/users",userRoute)
